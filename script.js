@@ -375,12 +375,14 @@ function selectBot(botName) {
 
     document.querySelector('.first-message').textContent =
       selectedBot.firstMessage;
-      const contentTitle = document.querySelector('.right-column .header-title strong');
-      const featuresText = document.querySelectorAll('.features-text');
-      contentTitle.textContent = selectedBot.titleText || 'Customize pricing offers for customers';
-      featuresText[0].textContent = selectedBot.subtitleText || 'Tailor the pricing plan based on the needs and sentiments for each customer.';
-      featuresText[1].textContent = selectedBot.featureIntro || 'The bot formulates a customized pricing plan by referring to:';
-  
+
+    const contentTitle = document.querySelector('.right-column .header-title strong');
+    const featuresText = document.querySelectorAll('.features-text');
+
+    contentTitle.textContent = selectedBot.titleText || 'Customize pricing offers for customers';
+    featuresText[0].textContent = selectedBot.subtitleText || 'Tailor the pricing plan based on the needs and sentiments for each customer.';
+    featuresText[1].textContent = selectedBot.featureIntro || 'The bot formulates a customized pricing plan by referring to:';
+
     const tagsContainer = document.querySelector('.header-keywords');
     tagsContainer.innerHTML = '';
     selectedBot.tags.forEach((tag) => {
