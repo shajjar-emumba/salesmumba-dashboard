@@ -306,11 +306,17 @@ body {
 /* Third Row: Input Field and Button */
 .row-three {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
   background-color: #f9f9f9;
   border-radius: 15px;
+  padding: 10px;
+}
+
+
+.input-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
 }
 
 .last-row {
@@ -321,21 +327,24 @@ body {
   background-color: #f9f9f9;
   border-radius: 15px;
 }
-/* Input Field */
+
 .query-input {
   flex-grow: 1;
+  max-width: 100%;
   padding: 10px;
-  margin-right: 10px;
   border-radius: 10px;
   border: 1px solid #ccc;
+  margin-right: 10px;
 }
+
 
 /* Button */
 .query-button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
-  background: url('/assets/ask_btn.png') no-repeat;
+  background: url('assets/ask_btn.png') no-repeat;
+  white-space: nowrap;
 }
 
 .right-column {
@@ -674,22 +683,28 @@ body {
   padding-left: 25px;
 }
 
-.attachment-button {
+
+.pdf-status {
   position: absolute;
-  background: none;
-  border: none;
-  padding: 0;
-  left: 3px;
-  top: 9px;
-  cursor: pointer;
+  left: 10px;
+  bottom: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: none;
 }
 
-.attachment-button .icon {
-  width: 20px;
-  height: 20px;
-  color: #666;
+.pdf-status.active {
+  display: block;
 }
 
-.attachment-button:hover .icon {
-  color: #333; /* Darken on hover */
+.attachment-icon.has-pdf {
+  color: #FF8C00;
 }
+
+#pdf-input {
+  display: none;
+}
+
