@@ -30,6 +30,14 @@ const bots = [
 
 const querybutton = document.getElementById('send-query-button');
 
+const emailFilterModal = document.getElementById('email-filter-modal');
+const cancelEmailFilter = document.getElementById('email-filter-cancel-button');
+const cancelEmailFilterModalIcon = document.getElementById(
+  'filter-modal-close-icon'
+);
+
+const emailFilterForm = document.getElementById('email-filter-form');
+
 function selectBot(botName) {
   const selectedBot = bots.find((bot) => bot.name === botName);
 
@@ -65,11 +73,6 @@ function selectBot(botName) {
     (btn) => btn.textContent.trim() === botName
   );
   if (button) button.classList.add('active');
-}
-
-function toggleEmailSyncOptions() {
-  const options = document.getElementById('email-sync-options');
-  options.style.display = options.style.display === 'none' ? 'block' : 'none';
 }
 
 querybutton.addEventListener('click', function () {
@@ -134,4 +137,25 @@ function onFetchAllEmails() {
 
 function onApplyFilters() {
   console.log('Apply Filters Selected');
+  emailFilterModal.style.display = 'flex'; // Show the modal
+
+  emailFilterForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+    const email = document.getElementById('sender-email').value;
+
+    console.log('Applied Filters' + startDate, endDate, email);
+
+    emailFilterModal.style.display = 'none';
+  });
 }
+
+cancelEmailFilter.addEventListener('click', function () {
+  emailFilterModal.style.display = 'none'; // Hide the modal
+});
+
+cancelEmailFilterModalIcon.addEventListener('click', function () {
+  emailFilterModal.style.display = 'none'; // Hide the modal
+});

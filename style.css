@@ -2,20 +2,13 @@
 
 :root {
   --primary-color: #014161;
-  /* --primary-color: #0fb85b; */
   --secondary-color: #34a853;
-
-  --accent-color: #9c27b0;
   --background-color: #f8f9fa;
   --text-primary: #202124;
   --text-secondary: #5f6368;
-  /* --border-color: #dadce0; */
   --border-color: #d6ddf1;
   --shadow-color: rgba(0, 0, 0, 0.1);
-  /* --primary-bg: #e3f6ff; */
   --primary-bg: #e6f6ff;
-
-  /* --primary-bg: #e7fdf1; */
 }
 
 /* Reset and Base Styles */
@@ -26,8 +19,6 @@
 }
 
 body {
-  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
   font-family: 'Poppins', sans-serif;
   background-color: var(--background-color);
   color: var(--text-primary);
@@ -59,8 +50,8 @@ body {
 }
 
 .logo {
-  max-width: 200px; /* Increased width */
-  max-height: 50px; /* Increased height */
+  max-width: 200px;
+  max-height: 50px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -284,46 +275,12 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  /* .sidebar {
-    width: 64px;
-    z-index: 10;
-  }
-
-  .logo-container {
-    padding: 0.5rem;
-  }
-
-  .nav-item span {
-    display: none;
-  }
-
-  .main-content {
-    margin-left: 64px;
-  }
-
-  .quick-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  } */
-}
+/* Chat bot styles */
 
 .container {
   display: flex;
-
   justify-content: space-between;
   gap: 10px;
-}
-
-.gradient-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: -1;
 }
 
 /* Columns */
@@ -391,7 +348,7 @@ body {
 }
 
 .contact-us p a {
-  color: var(--primary-color);
+  color: #34a853;
   text-decoration: none;
   font-weight: 600;
 }
@@ -609,8 +566,7 @@ body {
 /* Modal Content: Two Columns */
 .modal-content {
   display: flex;
-  width: 90%; /* Reduced the width */
-  max-width: 900px; /* Set a maximum width */
+  max-width: 550px; /* Set a maximum width */
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
@@ -622,28 +578,6 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 27px;
-}
-
-/* Content Column */
-.content-column {
-  width: 55%;
-  background-color: #091a21;
-  color: white;
-  border-radius: 11px;
-  align-content: flex-start;
-  background-image: url('img/form-gradient.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.content-container {
-  padding: 20px; /* Add padding inside the content container */
-  border-radius: 10px;
-}
-
-/* Form Column */
-.form-column {
-  width: 45%;
 }
 
 .form-column h3 {
@@ -684,7 +618,8 @@ body {
 
 .terms-text span a {
   text-decoration: none;
-  color: #ff9900;
+  color: #34a853;
+  font-weight: 600;
 }
 
 /* Unlock and Cancel Buttons */
@@ -769,29 +704,6 @@ body {
   width: 50%;
 }
 
-/* Notification Banner */
-.notification-banner {
-  background: linear-gradient(90deg, #f1652c 0%, #f78606 100%);
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 600px;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 /* Hidden by default */
 .hidden {
   display: none;
@@ -811,7 +723,7 @@ body {
   background-color: transparent; /* Optional: Make the scrollbar track transparent for a cleaner look */
 }
 
-/* Styles for responsiveness */
+/* Styles for responsiveness chatbot*/
 
 @media (max-width: 860px) {
   .container {

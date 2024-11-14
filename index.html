@@ -126,7 +126,7 @@
       <main class="main-content">
         <header class="header">
           <div>
-            <h1 class="welcome-text">Welcome back, John</h1>
+            <h1 class="welcome-text">Welcome back!</h1>
             <p class="subtitle">
               Here's what's happening with your sales tools
             </p>
@@ -232,23 +232,84 @@
                   </div>
                 </div>
               </div>
-              <div class="footer">
-                <div class="button-container">
-                  <button class="custom-button" id="make-it-yours">
-                    Make it Your Own
-                  </button>
-                </div>
-                <div class="contact-us">
-                  <p>
-                    If you need any further assistance, please feel free to
-                    <a href="#" id="contact-us">contact us</a>.
-                  </p>
-                </div>
-              </div>
+              <p class="features-text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatu
+              </p>
+              <div class="footer"></div>
             </div>
           </div>
         </div>
       </main>
+
+      <!-- fetch email with filter modal -->
+
+      <div id="email-filter-modal" class="registration-form-modal">
+        <div class="modal-content">
+          <img
+            id="filter-modal-close-icon"
+            class="modal-close-icon"
+            src="./assets/cross.svg"
+            alt="Corss icon svg"
+          />
+          <div class="columns-container">
+            <div class="form-column">
+              <h3>Fetch Email Based on Filters</h3>
+              <p class="form-subtitle">Please fill out all the fields.</p>
+
+              <form id="email-filter-form">
+                <div class="form-group">
+                  <label for="start-date">Start Date</label>
+                  <input
+                    type="date"
+                    id="start-date"
+                    name="startDate"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="end-date">End Date</label>
+                  <input type="date" id="end-date" name="endDate" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="sender-email">Sender Email</label>
+                  <input
+                    type="email"
+                    id="sender-email"
+                    name="senderEmail"
+                    required
+                  />
+                </div>
+
+                <p class="terms-text">
+                  By clicking on unlock you will be agreed to our
+                  <span> <a href="#">terms & conditions</a></span> and
+                  <span>
+                    <a href="#">privacy policy</a>
+                  </span>
+                </p>
+
+                <button type="submit" class="custom-button">
+                  Apply Filter
+                </button>
+                <button
+                  type="button"
+                  class="cancel-btn"
+                  id="email-filter-cancel-button"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="./script.js"></script>
