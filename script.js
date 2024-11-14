@@ -18,6 +18,7 @@ const cancelEmailFilterModalIcon = document.getElementById(
 );
 
 const emailFilterForm = document.getElementById('email-filter-form');
+const feedbackMessage = document.getElementById('feedback-message');
 
 const pdfInput = document.getElementById('pdf-input');
 const attachmentIcon = document.querySelector('.attachment-icon');
@@ -222,13 +223,10 @@ const bots = [
     tags: ['Chatbot', 'Quick'],
     firstMessage:
       'Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help you today?',
-  },
-  {
-    name: 'Instant Proposals',
-    description: 'Create proposals and quotes',
-    tags: ['documents', 'management', 'access'],
-    firstMessage:
-      "Hello! I'm your AI Proposal Generator. I can help create professional proposals and quotes based on your templates. What would you like to draft today?",
+    features: [
+      "Customer's historical conversations",
+      "Company's complex Pricing Document",
+    ],
   },
   {
     name: 'Email Insights',
@@ -236,6 +234,12 @@ const bots = [
     tags: ['email', 'insights', 'analytics'],
     firstMessage:
       "Hi there! I'm your Email Insights Assistant. I can help you understand customer conversations and extract key insights. How can I assist you today?",
+    features: [
+      'Advanced email analytics',
+      'Sentiment and intent analysis',
+      'Test 1',
+      'Test 2',
+    ],
   },
   {
     name: 'Sales Call Analysis',
@@ -243,6 +247,7 @@ const bots = [
     tags: ['calls', 'insights', 'analytics'],
     firstMessage:
       "Welcome! I'm your Sales Call Analysis Assistant. I can help analyze sales call recordings and update your CRM with insights. Which call recording would you like to analyze?",
+    features: ['Call sentiment analysis', 'Conversation summarization'],
   },
 ];
 
@@ -266,6 +271,23 @@ function selectBot(botName) {
       tagElement.classList.add('keyword');
       tagElement.textContent = tag;
       tagsContainer.appendChild(tagElement);
+    });
+
+    const featuresListContainer = document.querySelector('.features-list');
+    featuresListContainer.innerHTML = '';
+
+    selectedBot.features.forEach((feature) => {
+      const featureElement = document.createElement('div');
+      const featureIcon = document.createElement('img');
+      featureIcon.src = './assets/tick.svg';
+      featureIcon.alt = 'tick icon';
+
+      const featureText = document.createElement('p');
+      featureText.textContent = feature;
+
+      featureElement.appendChild(featureIcon);
+      featureElement.appendChild(featureText);
+      featuresListContainer.appendChild(featureElement);
     });
 
     document.querySelectorAll('.dynamic-message').forEach((message) => {
@@ -372,16 +394,34 @@ emailFilterForm.addEventListener('submit', function (e) {
   const endDate = document.getElementById('end-date').value;
   const email = document.getElementById('sender-email').value;
 
-  console.log('Applied Filters' + startDate, endDate, email);
+  if ((startDate && endDate) || email) {
+    console.log('Applied Filters:', { startDate, endDate, email });
 
-  emailFilterModal.style.display = 'none';
-  emailFilterForm.reset();
+    emailFilterModal.style.display = 'none';
+    emailFilterForm.reset();
+    feedbackMessage.textContent = 'Please fill out all the fields.';
+  } else {
+    if (!startDate && !endDate && !email) {
+      feedbackMessage.textContent =
+        'Please enter either both dates or an email.';
+    } else if ((startDate && !endDate) || (!startDate && endDate)) {
+      feedbackMessage.textContent =
+        'Please provide both start and end dates for date filtering.';
+    } else if (!email) {
+      feedbackMessage.textContent =
+        'Please enter a valid email for email filtering.';
+    }
+
+    feedbackMessage.style.display = 'block';
+  }
 });
 
 cancelEmailFilter.addEventListener('click', function () {
   emailFilterModal.style.display = 'none'; // Hide the modal
+  emailFilterForm.reset();
 });
 
 cancelEmailFilterModalIcon.addEventListener('click', function () {
   emailFilterModal.style.display = 'none'; // Hide the modal
+  emailFilterForm.reset();
 });

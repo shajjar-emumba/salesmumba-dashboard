@@ -255,11 +255,15 @@ body {
   display: flex;
   column-gap: 8px;
 }
+.features-list div img {
+  align-self: baseline;
+  padding-top: 5px;
+}
 
 .features-list p {
   color: #485273;
   font-size: 14px;
-  line-height: 193%;
+  margin-bottom: 5px;
 }
 
 .deploy-btn {
@@ -391,7 +395,7 @@ body {
   color: white;
   font-weight: 600;
   font-size: 16px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .custom-button:hover {
@@ -467,19 +471,11 @@ body {
 
 /* Modal Content: Two Columns */
 .modal-content {
-  display: flex;
-  max-width: 550px; /* Set a maximum width */
+  min-width: 550px; /* Set a maximum width */
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
   padding: 30px; /* Add padding around the columns */
-}
-
-/* Container for Columns */
-.columns-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 27px;
 }
 
 .form-column h3 {

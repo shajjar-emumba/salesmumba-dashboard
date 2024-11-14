@@ -35,19 +35,6 @@
               Pricing Assistant
             </a>
             <a
-              onclick="selectBot('Instant Proposals')"
-              href="#"
-              class="nav-item"
-              data-section="smart-docs"
-            >
-              <svg class="nav-icon" viewBox="0 0 24 24">
-                <path
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              Instant Proposals
-            </a>
-            <a
               onclick="selectBot('Email Insights')"
               href="#"
               class="nav-item"
@@ -106,9 +93,17 @@
                 <i class="fa-regular fa-envelope"></i>Fetch all Email
               </button>
               <button class="dropdown-item nav-item" onclick="onApplyFilters()">
-                <i class="fas fa-filter"></i> Email with Filters
+                <i class="fa-solid fa-sliders"></i> Email with Filters
               </button>
             </div>
+            <a href="#" class="nav-item" data-section="smart-docs">
+              <svg class="nav-icon" viewBox="0 0 24 24">
+                <path
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              Pricing Document
+            </a>
             <a href="#" class="nav-item" data-section="settings">
               <svg class="nav-icon" viewBox="0 0 24 24">
                 <path
@@ -157,8 +152,8 @@
                 <div class="chat-container" id="chat-box">
                   <div class="message user-message">Hi chatbot.</div>
                   <div class="message system-message first-message">
-                    Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help
-                    you today?
+                    Hello, I’m your pricing assistant specialized in pricing
+                    recommendations. How can I help you today?
                   </div>
                   <div class="message system-message">
                     This app can make mistakes; always verify important
@@ -183,11 +178,19 @@
             </div>
             <div class="column right-column">
               <div class="content">
-                <div class="header-title">Unlock new possibilities with personalized recommendations designed to meet your unique goals.</div>
-        
-                <div class="features-text">
-                  Adjust the pricing structure to suit the specific needs and preferences of each individual customer.
+                <div class="header-title">
+                  <strong>Customize pricing offers for customers</strong>
                 </div>
+
+                <div class="features-text">
+                  Tailor the pricing plan based on the needs and sentiments for
+                  each customer.
+                </div>
+
+                <div class="features-text">
+                  The bot formulates a customized pricing plan by referring to:
+                </div>
+
                 <div class="features-list">
                   <div>
                     <img src="assets/tick.svg" />
@@ -229,40 +232,29 @@
           <div class="columns-container">
             <div class="form-column">
               <h3>Fetch Email Based on Filters</h3>
+              <p class="form-subtitle" id="feedback-message">
+                Please fill out all the fields.
+              </p>
 
               <form id="email-filter-form">
                 <div class="form-group">
                   <label for="start-date">Start Date</label>
-                  <input
-                    type="date"
-                    id="start-date"
-                    name="startDate"
-                    required
-                  />
+                  <input type="date" id="start-date" name="startDate" />
                 </div>
 
                 <div class="form-group">
                   <label for="end-date">End Date</label>
-                  <input type="date" id="end-date" name="endDate" required />
+                  <input type="date" id="end-date" name="endDate" />
                 </div>
 
                 <div class="form-group">
                   <label for="sender-email">Sender Email</label>
                   <input
-                    type="email"
                     id="sender-email"
                     name="senderEmail"
-                    required
+                    placeholder="name@company.com or @domain.com"
                   />
                 </div>
-
-                <p class="terms-text">
-                  By clicking on unlock you will be agreed to our
-                  <span> <a href="#">terms & conditions</a></span> and
-                  <span>
-                    <a href="#">privacy policy</a>
-                  </span>
-                </p>
 
                 <button type="submit" class="custom-button">
                   Apply Filter
