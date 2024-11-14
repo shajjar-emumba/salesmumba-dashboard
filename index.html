@@ -35,6 +35,19 @@
               Pricing Assistant
             </a>
             <a
+              onclick="selectBot('Instant Proposals')"
+              href="#"
+              class="nav-item"
+              data-section="smart-docs"
+            >
+              <svg class="nav-icon" viewBox="0 0 24 24">
+                <path
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              Instant Proposals
+            </a>
+            <a
               onclick="selectBot('Email Insights')"
               href="#"
               class="nav-item"
@@ -93,17 +106,9 @@
                 <i class="fa-regular fa-envelope"></i>Fetch all Email
               </button>
               <button class="dropdown-item nav-item" onclick="onApplyFilters()">
-                <i class="fa-solid fa-sliders"></i> Email with Filters
+                <i class="fas fa-filter"></i> Email with Filters
               </button>
             </div>
-            <a href="#" class="nav-item" data-section="smart-docs">
-              <svg class="nav-icon" viewBox="0 0 24 24">
-                <path
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              Pricing Document
-            </a>
             <a href="#" class="nav-item" data-section="settings">
               <svg class="nav-icon" viewBox="0 0 24 24">
                 <path
@@ -251,6 +256,13 @@
                   />
                 </div>
 
+                <p class="terms-text">
+                  By clicking on unlock you will be agreed to our
+                  <span> <a href="#">terms & conditions</a></span> and
+                  <span>
+                    <a href="#">privacy policy</a>
+                  </span>
+                </p>
 
                 <button type="submit" class="custom-button">
                   Apply Filter
