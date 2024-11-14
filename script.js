@@ -8,7 +8,9 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const s3 = new AWS.S3();
 
 
-const querybutton = document.getElementById('send-query-button');
+
+const queryButton = document.getElementById('send-query-button')
+const userInput = document.getElementById("user-input");
 const BEDROCK_API_ENDPOINT = 'https://fbrbdt2hl5.execute-api.us-east-1.amazonaws.com/prod/chat';
 
 const emailFilterModal = document.getElementById('email-filter-modal');
@@ -19,7 +21,6 @@ const cancelEmailFilterModalIcon = document.getElementById(
 
 const emailFilterForm = document.getElementById('email-filter-form');
 const feedbackMessage = document.getElementById('feedback-message');
-
 const pdfInput = document.getElementById('pdf-input');
 const attachmentIcon = document.querySelector('.attachment-icon');
 
@@ -41,7 +42,7 @@ function showNotification(message, type = 'success') {
   // Create message text
   const messageText = document.createElement('span');
   messageText.textContent = type === 'success' 
-      ? `Uploaded: ${message}` 
+      ? `${message}` 
       : message;
   
   // Create progress indicator (for uploads)
@@ -100,14 +101,12 @@ pdfInput.addEventListener('change', function(event) {
           } else {
               console.log('File uploaded successfully:', newFileName);
               uploadingNotification.remove();
-              showNotification(file.name, 'success');
+              showNotification('File uploaded successfully', 'success');
               
         }
       });
   }
 });
-
-
 
 
 sessionId = uuid.v4()
@@ -185,6 +184,117 @@ async function callBedrockAgent(message, sessionId) {
   }
 }
 
+async function fetchEmail(userId, startDate = null, endDate = null, senderEmail = null) {
+  const emailFetchUrl = 'https://b4ioz7den9.execute-api.us-east-1.amazonaws.com/Outlookapp/EmailFetchAPI';
+
+  const requestBody = {
+    user_id: userId,
+  };
+  if (senderEmail) requestBody.sender_email = senderEmail
+  if (startDate) requestBody.start_date = startDate;
+  if (endDate) requestBody.end_date = endDate;
+
+  console.log('Fetching emails:', requestBody);
+
+  try {
+    const response = await fetch(emailFetchUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log('Fetch Email API response status:', response.status);
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Email fetch successful:', result);
+      await startSync();
+    } else {
+      const errorText = await response.text();
+      console.error('Error fetching emails. Status:', response.status, 'Details:', errorText);
+    }
+  } catch (error) {
+    console.error('Error calling FetchEmail API:', error);
+  }
+}
+
+
+async function startSync() {
+  const syncUrl = 'https://b4ioz7den9.execute-api.us-east-1.amazonaws.com/Outlookapp/LambdaTriggerAPI';
+
+  try {
+    const response = await fetch(syncUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+
+    console.log('Sync request sent. Status:', response.status);
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Sync successful:', result);
+      showNotification('Email sync started successfully.');
+    } else {
+      const errorText = await response.text();
+      console.error('Error syncing knowledge base. Status:', response.status, 'Details:', errorText);
+      showNotification('Error starting email sync. Please try again later.', 'error');
+    }
+  } catch (error) {
+    console.error('Error syncing knowledge base:', error);
+    showNotification('Error starting email sync. Please try again later.', 'error');
+  }
+}
+
+async function fetchEmail(userId, startDate = null, endDate = null, senderEmail = null) {
+  const emailFetchUrl = 'https://b4ioz7den9.execute-api.us-east-1.amazonaws.com/Outlookapp/EmailFetchAPI';
+  const requestBody = {
+    user_id: userId,
+  };
+  if (senderEmail) requestBody.sender_email = senderEmail
+  if (startDate) requestBody.start_date = startDate;
+  if (endDate) requestBody.end_date = endDate;
+
+  console.log('Fetching emails:', requestBody);
+
+  try {
+    const response = await fetch(emailFetchUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log('Fetch Email API response status:', response.status);
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Email fetch successful:', result);
+      showNotification('Email fetch successful');
+      await startSync();
+    } else {
+      const errorText = await response.text();
+      console.error('Error fetching emails. Status:', response.status, 'Details:', errorText);
+      showNotification('Error fetching emails. Please try again later.', 'error');
+    }
+  } catch (error) {
+    console.error('Error calling FetchEmail API:', error);
+    showNotification('Error fetching emails. Please try again later.', 'error');
+  }
+}
+
+
+function extractUserIdFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('user_id');
+
+}
+
 // Function to create and append a message to the chat
 function appendMessage(content, isUser = false) {
   const chatBox = document.getElementById('chat-box');
@@ -220,30 +330,32 @@ const bots = [
   {
     name: 'Pricing Assistant',
     description: 'Generate pricing offers instantly',
-    tags: ['Chatbot', 'Quick'],
+    tags: ['Chatbot'],
     firstMessage:
-      'Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help you today?',
+      "Hello, I'm your pricing assistant specialized in pricing recommendations. How can I help you today?",
     features: [
-      "Customer's historical conversations",
-      "Company's complex Pricing Document",
+      "Converse with your emails",
+      "Generate formatted PDF Quotation Letters",
+      "Upload your company's header/footer to be incorporated in the generated letter",
+      "Compare different pricing offers and discounts for each customer"
     ],
   },
   {
     name: 'Email Insights',
     description: 'Chat with customer email data',
     tags: ['email', 'insights', 'analytics'],
-    firstMessage:
-      "Hi there! I'm your Email Insights Assistant. I can help you understand customer conversations and extract key insights. How can I assist you today?",
+    firstMessage: "Hi there! I'm your Email Insights Assistant. I can help you understand customer conversations and extract key insights. How can I assist you today?",
     features: [
-      'Advanced email analytics',
-      'Sentiment and intent analysis',
-      'Test 1',
-      'Test 2',
+      'Key customer pain points',
+      'Historical interaction summary',
+      'Customer requirements and goals',
     ],
+    titleText: 'Analyze customer email conversations',
+    subtitleText: 'Get quick insights from email threads to understand customer context and history.',
+    featureIntro: 'The bot synthesizes email data to provide:'
   },
   {
-    name: 'Sales Call Analysis',
-    description: 'Analyze sales calls to extract key insights',
+    name: 'Sales Call Analysis',    description: 'Analyze sales calls to extract key insights',
     tags: ['calls', 'insights', 'analytics'],
     firstMessage:
       "Welcome! I'm your Sales Call Analysis Assistant. I can help analyze sales call recordings and update your CRM with insights. Which call recording would you like to analyze?",
@@ -263,7 +375,12 @@ function selectBot(botName) {
 
     document.querySelector('.first-message').textContent =
       selectedBot.firstMessage;
-
+      const contentTitle = document.querySelector('.right-column .header-title strong');
+      const featuresText = document.querySelectorAll('.features-text');
+      contentTitle.textContent = selectedBot.titleText || 'Customize pricing offers for customers';
+      featuresText[0].textContent = selectedBot.subtitleText || 'Tailor the pricing plan based on the needs and sentiments for each customer.';
+      featuresText[1].textContent = selectedBot.featureIntro || 'The bot formulates a customized pricing plan by referring to:';
+  
     const tagsContainer = document.querySelector('.header-keywords');
     tagsContainer.innerHTML = '';
     selectedBot.tags.forEach((tag) => {
@@ -306,7 +423,7 @@ function selectBot(botName) {
   if (button) button.classList.add('active');
 }
 
-querybutton.addEventListener('click', async function () {
+async function handleUserInput()  {
   const userInput = document.getElementById('user-input').value;
   if (userInput.trim() === '') return;
 
@@ -351,14 +468,9 @@ querybutton.addEventListener('click', async function () {
       // Display error message
       appendMessage('Sorry, I encountered an error. Please try again.');
   }
-});
+}
 
-// Initialize session
-window.addEventListener('load', function() {
-  console.log('Chat session initialized with ID:', sessionId);
-});
-
-
+queryButton.addEventListener('click', handleUserInput);
 
 
 function onFileUpload() {
@@ -379,12 +491,38 @@ function toggleEmailSyncDropdown() {
   icon.classList.toggle('fa-chevron-up', !isDropdownOpen);
 }
 
-function onFetchAllEmails() {
+async function onFetchAllEmails() {
   console.log('Fetch All Emails Selected');
+  const userId = extractUserIdFromUrl();
+  showNotification('Sync Started');
+
+
+  try {
+    await fetchEmail(userId);
+  } catch (error) {
+    console.error('Error fetching emails:', error);
+    showErrorMessage('Error fetching emails. Please try again later.');
+  
+}
 }
 
 function onApplyFilters() {
   emailFilterModal.style.display = 'flex';
+}
+
+async function onFetchFilteredEmails() {
+  const userId = extractUserIdFromUrl();
+  const startDate = document.getElementById('start-date').value;
+  const endDate = document.getElementById('end-date').value;
+  const senderEmail = document.getElementById('sender-email').value;
+  showNotification('Sync Started');
+
+  try {
+    await fetchEmail(userId, startDate || null, endDate || null, senderEmail);
+  } catch (error) {
+    console.error('Error fetching filtered emails:', error);
+    showErrorMessage('Error fetching emails. Please try again later.');
+  }
 }
 
 emailFilterForm.addEventListener('submit', function (e) {
@@ -396,32 +534,118 @@ emailFilterForm.addEventListener('submit', function (e) {
 
   if ((startDate && endDate) || email) {
     console.log('Applied Filters:', { startDate, endDate, email });
-
+    onFetchFilteredEmails();
     emailFilterModal.style.display = 'none';
     emailFilterForm.reset();
-    feedbackMessage.textContent = 'Please fill out all the fields.';
   } else {
-    if (!startDate && !endDate && !email) {
-      feedbackMessage.textContent =
-        'Please enter either both dates or an email.';
-    } else if ((startDate && !endDate) || (!startDate && endDate)) {
-      feedbackMessage.textContent =
-        'Please provide both start and end dates for date filtering.';
-    } else if (!email) {
-      feedbackMessage.textContent =
-        'Please enter a valid email for email filtering.';
-    }
-
-    feedbackMessage.style.display = 'block';
+    showEmailFilterError();
   }
 });
 
+function showEmailFilterError(message) {
+  if (!startDate && !endDate && !email) {
+    feedbackMessage.textContent = 'Please enter either both dates or an email.';
+  } else if ((startDate && !endDate) || (!startDate && endDate)) {
+    feedbackMessage.textContent = 'Please provide both start and end dates for date filtering.';
+  } else if (!email) {
+    feedbackMessage.textContent = 'Please enter a valid email for email filtering.';
+  }
+  feedbackMessage.style.display = 'block';
+}
+
 cancelEmailFilter.addEventListener('click', function () {
-  emailFilterModal.style.display = 'none'; // Hide the modal
+  emailFilterModal.style.display = 'none';
   emailFilterForm.reset();
 });
 
 cancelEmailFilterModalIcon.addEventListener('click', function () {
-  emailFilterModal.style.display = 'none'; // Hide the modal
+  emailFilterModal.style.display = 'none';
   emailFilterForm.reset();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const sessionId = uuid.v4();
+  console.log('Generated session ID:', sessionId);
+
+  const userId = extractUserIdFromUrl();
+  console.log('Extracted User ID:', userId);
+
+  userInput.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+          handleUserInput();
+      }
+  });
+
+  const syncButton = document.querySelector('.Sync-Button');
+  if (syncButton) {
+      syncButton.addEventListener('click', function() {
+          showSyncOptionsPopup();
+      });
+  }
+
+  const fetchAllButton = document.getElementById('fetch-all-emails');
+  if (fetchAllButton) {
+      fetchAllButton.addEventListener('click', async function() {
+          hideSyncOptionsPopup();
+          console.log('Fetching all emails with user ID:', userId);
+          await fetchEmail(userId);
+      });
+  }
+
+  const fetchFilteredButton = document.getElementById('fetch-filtered-emails');
+  if (fetchFilteredButton) {
+      fetchFilteredButton.addEventListener('click', function() {
+          hideSyncOptionsPopup();
+          showDatePopup();
+      });
+  }
+
+  const submitFiltersButton = document.getElementById('submit-filters');
+  if (submitFiltersButton) {
+      submitFiltersButton.addEventListener('click', async function() {
+          const startDate = document.getElementById('start-date').value;
+          const endDate = document.getElementById('end-date').value;
+          const senderEmail = document.getElementById('sender-email').value;
+          hideDatePopup();
+
+          console.log('Selected Start Date:', startDate);
+          console.log('Selected End Date:', endDate);
+          console.log('Sender Email:', senderEmail);
+
+          await fetchEmail(userId, startDate || null, endDate || null, senderEmail);
+      });
+  }
+
+  function showSyncOptionsPopup() {
+      const syncOptionsPopup = document.getElementById('sync-options-popup');
+      if (syncOptionsPopup) {
+          syncOptionsPopup.classList.remove('hidden');
+      }
+  }
+
+  function hideSyncOptionsPopup() {
+      const syncOptionsPopup = document.getElementById('sync-options-popup');
+      if (syncOptionsPopup) {
+          syncOptionsPopup.classList.add('hidden');
+      }
+  }
+
+  function showDatePopup() {
+      const datePopup = document.getElementById('filter-popup');
+      if (datePopup) {
+          datePopup.classList.remove('hidden');
+      }
+  }
+
+  function hideDatePopup() {
+      const datePopup = document.getElementById('filter-popup');
+      if (datePopup) {
+          datePopup.classList.add('hidden');
+      }
+  }
+
+  function extractUserIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('user_id');
+  }
 });

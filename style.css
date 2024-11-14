@@ -730,8 +730,8 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #bfdbff;
-  color: white;
+  background-color:#e6f6ff;
+  color: black;
   padding: 12px 24px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -750,7 +750,7 @@ body {
 
 /* Success state */
 .upload-notification.success {
-  background-color: #bfdbff;
+  background-color: #e6f6ff;
 }
 
 /* Error state */
@@ -785,7 +785,7 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #6b7280;
+  color: #e6f6ff;
   margin-top: 4px;
 }
 
