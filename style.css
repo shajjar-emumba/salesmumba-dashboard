@@ -259,7 +259,7 @@ body {
 .features-list p {
   color: #485273;
   font-size: 14px;
-  margin-bottom: 5px;
+  line-height: 193%;
 }
 
 .deploy-btn {
