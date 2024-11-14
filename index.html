@@ -235,42 +235,29 @@
           <div class="columns-container">
             <div class="form-column">
               <h3>Fetch Email Based on Filters</h3>
-              <p class="form-subtitle">Please fill out all the fields.</p>
+              <p class="form-subtitle" id="feedback-message">
+                Please fill out all the fields.
+              </p>
 
               <form id="email-filter-form">
                 <div class="form-group">
                   <label for="start-date">Start Date</label>
-                  <input
-                    type="date"
-                    id="start-date"
-                    name="startDate"
-                    required
-                  />
+                  <input type="date" id="start-date" name="startDate" />
                 </div>
 
                 <div class="form-group">
                   <label for="end-date">End Date</label>
-                  <input type="date" id="end-date" name="endDate" required />
+                  <input type="date" id="end-date" name="endDate" />
                 </div>
 
                 <div class="form-group">
                   <label for="sender-email">Sender Email</label>
                   <input
-                    type="email"
                     id="sender-email"
                     name="senderEmail"
-                    required
-                    placeholder="example@example.com"
+                    placeholder="name@company.com or @domain.com"
                   />
                 </div>
-
-                <p class="terms-text">
-                  By clicking on unlock you will be agreed to our
-                  <span> <a href="#">terms & conditions</a></span> and
-                  <span>
-                    <a href="#">privacy policy</a>
-                  </span>
-                </p>
 
                 <button type="submit" class="custom-button">
                   Apply Filter

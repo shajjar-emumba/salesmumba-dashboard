@@ -9,6 +9,7 @@ const cancelEmailFilterModalIcon = document.getElementById(
 );
 
 const emailFilterForm = document.getElementById('email-filter-form');
+const feedbackMessage = document.getElementById('feedback-message');
 
 //Array of bot objects used to identify and manage active bots
 
@@ -175,16 +176,34 @@ emailFilterForm.addEventListener('submit', function (e) {
   const endDate = document.getElementById('end-date').value;
   const email = document.getElementById('sender-email').value;
 
-  console.log('Applied Filters' + startDate, endDate, email);
+  if ((startDate && endDate) || email) {
+    console.log('Applied Filters:', { startDate, endDate, email });
 
-  emailFilterModal.style.display = 'none';
-  emailFilterForm.reset();
+    emailFilterModal.style.display = 'none';
+    emailFilterForm.reset();
+    feedbackMessage.textContent = 'Please fill out all the fields.';
+  } else {
+    if (!startDate && !endDate && !email) {
+      feedbackMessage.textContent =
+        'Please enter either both dates or an email.';
+    } else if ((startDate && !endDate) || (!startDate && endDate)) {
+      feedbackMessage.textContent =
+        'Please provide both start and end dates for date filtering.';
+    } else if (!email) {
+      feedbackMessage.textContent =
+        'Please enter a valid email for email filtering.';
+    }
+
+    feedbackMessage.style.display = 'block';
+  }
 });
 
 cancelEmailFilter.addEventListener('click', function () {
   emailFilterModal.style.display = 'none'; // Hide the modal
+  emailFilterForm.reset();
 });
 
 cancelEmailFilterModalIcon.addEventListener('click', function () {
   emailFilterModal.style.display = 'none'; // Hide the modal
+  emailFilterForm.reset();
 });
