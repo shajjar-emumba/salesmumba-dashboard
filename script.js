@@ -216,7 +216,7 @@ function appendMessage(content, isUser = false) {
 
 //Array of bot objects used to identify and manage active bots
 
-const bots = [
+const bots = [  
   {
     name: 'Pricing Assistant',
     description: 'Generate pricing offers instantly',
@@ -224,13 +224,7 @@ const bots = [
     firstMessage:
       'Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help you today?',
   },
-  {
-    name: 'Instant Proposals',
-    description: 'Create proposals and quotes',
-    tags: ['documents', 'management', 'access'],
-    firstMessage:
-      "Hello! I'm your AI Proposal Generator. I can help create professional proposals and quotes based on your templates. What would you like to draft today?",
-  },
+
   {
     name: 'Email Insights',
     description: 'Chat with customer email data',
