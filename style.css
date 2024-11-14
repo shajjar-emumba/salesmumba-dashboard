@@ -255,11 +255,15 @@ body {
   display: flex;
   column-gap: 8px;
 }
+.features-list div img {
+  align-self: baseline;
+  padding-top: 5px;
+}
 
 .features-list p {
   color: #485273;
   font-size: 14px;
-  line-height: 193%;
+  margin-bottom: 5px;
 }
 
 .deploy-btn {

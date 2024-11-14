@@ -35,19 +35,6 @@
               Pricing Assistant
             </a>
             <a
-              onclick="selectBot('Instant Proposals')"
-              href="#"
-              class="nav-item"
-              data-section="smart-docs"
-            >
-              <svg class="nav-icon" viewBox="0 0 24 24">
-                <path
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              Instant Proposals
-            </a>
-            <a
               onclick="selectBot('Email Insights')"
               href="#"
               class="nav-item"
@@ -106,9 +93,17 @@
                 <i class="fa-regular fa-envelope"></i>Fetch all Email
               </button>
               <button class="dropdown-item nav-item" onclick="onApplyFilters()">
-                <i class="fas fa-filter"></i> Email with Filters
+                <i class="fa-solid fa-sliders"></i> Email with Filters
               </button>
             </div>
+            <a href="#" class="nav-item" data-section="smart-docs">
+              <svg class="nav-icon" viewBox="0 0 24 24">
+                <path
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              Pricing Document
+            </a>
             <a href="#" class="nav-item" data-section="settings">
               <svg class="nav-icon" viewBox="0 0 24 24">
                 <path
@@ -157,8 +152,8 @@
                 <div class="chat-container" id="chat-box">
                   <div class="message user-message">Hi chatbot.</div>
                   <div class="message system-message first-message">
-                    Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help
-                    you today?
+                    Hello, I’m your pricing assistant specialized in pricing
+                    recommendations. How can I help you today?
                   </div>
                   <div class="message system-message">
                     This app can make mistakes; always verify important
@@ -201,15 +196,16 @@
                 <div class="header-title">
                   <strong>Customize pricing offers for customers</strong>
                 </div>
-                
+
                 <div class="features-text">
-                  Tailor the pricing plan based on the needs and sentiments for each customer.
+                  Tailor the pricing plan based on the needs and sentiments for
+                  each customer.
                 </div>
-            
+
                 <div class="features-text">
                   The bot formulates a customized pricing plan by referring to:
                 </div>
-                
+
                 <div class="features-list">
                   <div>
                     <img src="./assets/tick.svg" alt="tick icon" />
@@ -264,6 +260,7 @@
                     id="sender-email"
                     name="senderEmail"
                     required
+                    placeholder="example@example.com"
                   />
                 </div>
 
