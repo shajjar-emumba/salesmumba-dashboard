@@ -220,26 +220,29 @@ const bots = [
   {
     name: 'Pricing Assistant',
     description: 'Generate pricing offers instantly',
-    tags: ['Chatbot', 'Quick'],
+    tags: ['Chatbot'],
     firstMessage:
-      'Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help you today?',
+      "Hello, I'm your pricing assistant specialized in pricing recommendations. How can I help you today?",
     features: [
-      "Customer's historical conversations",
-      "Company's complex Pricing Document",
+      "Converse with your emails",
+      "Generate formatted PDF Quotation Letters",
+      "Upload your company's header/footer to be incorporated in the generated letter",
+      "Compare different pricing offers and discounts for each customer"
     ],
   },
   {
     name: 'Email Insights',
     description: 'Chat with customer email data',
     tags: ['email', 'insights', 'analytics'],
-    firstMessage:
-      "Hi there! I'm your Email Insights Assistant. I can help you understand customer conversations and extract key insights. How can I assist you today?",
+    firstMessage: "Hi there! I'm your Email Insights Assistant. I can help you understand customer conversations and extract key insights. How can I assist you today?",
     features: [
-      'Advanced email analytics',
-      'Sentiment and intent analysis',
-      'Test 1',
-      'Test 2',
+      'Key customer pain points',
+      'Historical interaction summary',
+      'Customer requirements and goals',
     ],
+    titleText: 'Analyze customer email conversations',
+    subtitleText: 'Get quick insights from email threads to understand customer context and history.',
+    featureIntro: 'The bot synthesizes email data to provide:'
   },
   {
     name: 'Sales Call Analysis',
@@ -263,6 +266,13 @@ function selectBot(botName) {
 
     document.querySelector('.first-message').textContent =
       selectedBot.firstMessage;
+
+    const contentTitle = document.querySelector('.right-column .header-title strong');
+    const featuresText = document.querySelectorAll('.features-text');
+
+    contentTitle.textContent = selectedBot.titleText || 'Customize pricing offers for customers';
+    featuresText[0].textContent = selectedBot.subtitleText || 'Tailor the pricing plan based on the needs and sentiments for each customer.';
+    featuresText[1].textContent = selectedBot.featureIntro || 'The bot formulates a customized pricing plan by referring to:';
 
     const tagsContainer = document.querySelector('.header-keywords');
     tagsContainer.innerHTML = '';
