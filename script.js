@@ -1,6 +1,15 @@
 // Selectors
+AWS.config.region = 'us-east-1'
+
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'us-east-1:8a9b205f-2e8e-4bb4-91f5-5c9d5e993029' 
+});
+
+const s3 = new AWS.S3();
+
 
 const querybutton = document.getElementById('send-query-button');
+const BEDROCK_API_ENDPOINT = 'https://fbrbdt2hl5.execute-api.us-east-1.amazonaws.com/prod/chat';
 
 const emailFilterModal = document.getElementById('email-filter-modal');
 const cancelEmailFilter = document.getElementById('email-filter-cancel-button');
@@ -9,6 +18,200 @@ const cancelEmailFilterModalIcon = document.getElementById(
 );
 
 const emailFilterForm = document.getElementById('email-filter-form');
+
+const pdfInput = document.getElementById('pdf-input');
+const attachmentIcon = document.querySelector('.attachment-icon');
+
+function showNotification(message, type = 'success') {
+  // Remove any existing notifications
+  const existingNotifications = document.querySelectorAll('.upload-notification');
+  existingNotifications.forEach(notification => notification.remove());
+
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = `upload-notification ${type}`;
+  
+  // Create file icon
+  const fileIcon = document.createElement('i');
+  fileIcon.className = type === 'success' 
+      ? 'fas fa-file-pdf' 
+      : 'fas fa-exclamation-circle';
+  
+  // Create message text
+  const messageText = document.createElement('span');
+  messageText.textContent = type === 'success' 
+      ? `Uploaded: ${message}` 
+      : message;
+  
+  // Create progress indicator (for uploads)
+  if (type === 'uploading') {
+      const loadingSpinner = document.createElement('div');
+      loadingSpinner.className = 'upload-loading';
+      notification.appendChild(loadingSpinner);
+  }
+  
+  // Append elements
+  notification.appendChild(fileIcon);
+  notification.appendChild(messageText);
+  document.body.appendChild(notification);
+  
+  // Add fade out animation before removing
+  if (type !== 'uploading') {
+      setTimeout(() => {
+          notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+          setTimeout(() => {
+              notification.remove();
+          }, 300);
+      }, 3000);
+  }
+  
+  return notification; // Return the notification element for potential updates
+}
+
+// Update the upload handler to use the new notification system
+pdfInput.addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      
+      if (fileExtension !== 'pdf') {
+          showNotification('Please upload a PDF file', 'error');
+          return;
+      }
+      
+      const newFileName = `${sessionId}.${fileExtension}`;
+      const uploadingNotification = showNotification('Uploading...', 'uploading');
+      
+      
+      const params = {
+          Bucket: 'uploaded-template',
+          Key: newFileName,
+          Body: file,
+          ContentType: file.type
+      };
+      
+      s3.putObject(params, function(err, data) {
+          if (err) {
+              console.error('Error uploading file:', err);
+              uploadingNotification.remove();
+              showNotification('Error uploading file. Please try again.', 'error');
+              attachmentIcon.style.color = '';
+          } else {
+              console.log('File uploaded successfully:', newFileName);
+              uploadingNotification.remove();
+              showNotification(file.name, 'success');
+              
+        }
+      });
+  }
+});
+
+
+
+
+sessionId = uuid.v4()
+
+async function callBedrockAgent(message, sessionId) {
+  try {
+      const response = await fetch(BEDROCK_API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              message: message,
+              sessionId: sessionId
+          }),
+      });
+      
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Raw API Response:', data);
+
+      if (typeof data === 'object' && data.statusCode === 200) {
+          let bodyContent;
+          
+          // Handle case where body is a string that needs parsing
+          if (typeof data.body === 'string') {
+              try {
+                  bodyContent = JSON.parse(data.body);
+              } catch (e) {
+                  bodyContent = { message: data.body };
+              }
+          } else {
+              bodyContent = data.body;
+          }
+
+          // Handle document generation response
+          if (bodyContent.type === 'document') {
+              return {
+                  type: 'document',
+                  message: bodyContent.message,
+                  downloadUrl: bodyContent.download_url
+              };
+          }
+          
+          // Handle text response
+          if (bodyContent.type === 'text') {
+              return {
+                  type: 'text',
+                  message: bodyContent.message
+              };
+          }
+
+          // If bodyContent has a direct message property
+          if (bodyContent.message) {
+              return {
+                  type: 'text',
+                  message: bodyContent.message
+              };
+          }
+
+          console.warn('Unexpected response structure:', bodyContent);
+          return {
+              type: 'text',
+              message: 'I received your message but encountered an unexpected response format. Please try again.'
+          };
+      }
+      
+      throw new Error('Invalid response structure from API');
+  } catch (error) {
+      console.error('Error in callBedrockAgent:', error);
+      throw error;
+  }
+}
+
+// Function to create and append a message to the chat
+function appendMessage(content, isUser = false) {
+  const chatBox = document.getElementById('chat-box');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${isUser ? 'user-message' : 'system-message'} dynamic-message`;
+  
+  if (typeof content === 'string') {
+      messageDiv.innerText = content;
+  } else {
+      // For document responses, create formatted content
+      const messageText = document.createElement('div');
+      messageText.innerText = content.message;
+      messageDiv.appendChild(messageText);
+
+      if (content.downloadUrl) {
+          const downloadLink = document.createElement('a');
+          downloadLink.href = content.downloadUrl;
+          downloadLink.target = '_blank';
+          downloadLink.className = 'download-link';
+          downloadLink.innerText = 'Download Document';
+          messageDiv.appendChild(downloadLink);
+      }
+  }
+  
+  chatBox.appendChild(messageDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 
 //Array of bot objects used to identify and manage active bots
 
@@ -81,45 +284,60 @@ function selectBot(botName) {
   if (button) button.classList.add('active');
 }
 
-// this method is responsible for the user message and bot response
-
-querybutton.addEventListener('click', function () {
+querybutton.addEventListener('click', async function () {
   const userInput = document.getElementById('user-input').value;
   if (userInput.trim() === '') return;
 
-  const chatBox = document.getElementById('chat-box');
-
   // Display user message
-  const userMessage = document.createElement('div');
-  userMessage.className = 'message user-message dynamic-message';
-  userMessage.innerText = userInput;
-
-  // Append the message container to the chat box
-  chatBox.appendChild(userMessage);
+  appendMessage(userInput, true);
 
   // Clear input field
   document.getElementById('user-input').value = '';
 
-  // Scroll chat box to bottom
-  chatBox.scrollTop = chatBox.scrollHeight;
+  // Show loading state
+  const loadingMessage = document.createElement('div');
+  loadingMessage.className = 'message system-message dynamic-message';
+  loadingMessage.innerText = 'Thinking...';
+  document.getElementById('chat-box').appendChild(loadingMessage);
 
-  // Send user message to server
+  try {
+      const response = await callBedrockAgent(userInput, sessionId);
+      
+      // Remove loading message
+      if (loadingMessage && loadingMessage.parentNode) {
+          loadingMessage.remove();
+      }
 
-  // Display bot response
-  const botMessage = document.createElement('div');
-  botMessage.className = 'message system-message dynamic-message';
+      // Handle the response based on its type
+      if (response.type === 'document') {
+          appendMessage({
+              message: response.message,
+              downloadUrl: response.downloadUrl
+          });
+      } else {
+          appendMessage(response.message);
+      }
 
-  // Create avatar element
-  const botAvatar = document.createElement('img');
-  botAvatar.src = 'img/ask_btn.png.png'; // Add the path to your bot avatar image
-  botAvatar.className = 'avatar';
+  } catch (error) {
+      console.error('Chat error:', error);
+      
+      // Remove loading message
+      if (loadingMessage && loadingMessage.parentNode) {
+          loadingMessage.remove();
+      }
 
-  botMessage.innerText = 'system';
-  chatBox.appendChild(botMessage);
-
-  // Scroll chat box to bottom
-  chatBox.scrollTop = chatBox.scrollHeight;
+      // Display error message
+      appendMessage('Sorry, I encountered an error. Please try again.');
+  }
 });
+
+// Initialize session
+window.addEventListener('load', function() {
+  console.log('Chat session initialized with ID:', sessionId);
+});
+
+
+
 
 function onFileUpload() {
   console.log('File Upload Selected');
@@ -167,3 +385,4 @@ cancelEmailFilter.addEventListener('click', function () {
 cancelEmailFilterModalIcon.addEventListener('click', function () {
   emailFilterModal.style.display = 'none'; // Hide the modal
 });
+
