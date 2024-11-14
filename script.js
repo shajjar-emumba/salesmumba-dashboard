@@ -1,32 +1,4 @@
-const bots = [
-  {
-    name: 'Quick Quote',
-    description: 'Get quick and accurate quotes.',
-    tags: ['quotes', 'quick', 'accurate'],
-    firstMessage: 'Hello, I’m the Quick Quote specialist. How can I help you?',
-  },
-  {
-    name: 'Smart Docs',
-    description: 'Manage and access documents intelligently.',
-    tags: ['documents', 'management', 'access'],
-    firstMessage:
-      'Hi, I’m here to assist you with your documents. How can I help?',
-  },
-  {
-    name: 'Email Intel',
-    description: 'Insights into your email interactions.',
-    tags: ['email', 'insights', 'analytics'],
-    firstMessage:
-      'Hello, I’m the Email Intel bot. How can I help you analyze emails?',
-  },
-  {
-    name: 'Call Insights',
-    description: 'Analyze and gain insights from calls.',
-    tags: ['calls', 'insights', 'analytics'],
-    firstMessage:
-      'Hi, I’m the Call Insights bot. How can I assist with call analysis?',
-  },
-];
+// Selectors
 
 const querybutton = document.getElementById('send-query-button');
 
@@ -37,6 +9,41 @@ const cancelEmailFilterModalIcon = document.getElementById(
 );
 
 const emailFilterForm = document.getElementById('email-filter-form');
+
+//Array of bot objects used to identify and manage active bots
+
+const bots = [
+  {
+    name: 'Pricing Assistant',
+    description: 'Get quick and accurate quotes.',
+    tags: ['Chatbot', 'Quick'],
+    firstMessage:
+      'Hello, I’m the Pricing Assistant  specialist. How can I help you?',
+  },
+  {
+    name: 'Instant Proposals',
+    description: 'Manage and access documents intelligently.',
+    tags: ['documents', 'management', 'access'],
+    firstMessage:
+      'Hi, I’m here to assist you with your documents. How can I help?',
+  },
+  {
+    name: 'Email Insights',
+    description: 'Insights into your email interactions.',
+    tags: ['email', 'insights', 'analytics'],
+    firstMessage:
+      'Hello, I’m the Email Intel bot. How can I help you analyze emails?',
+  },
+  {
+    name: 'Sales Call Analysis',
+    description: 'Analyze and gain insights from calls.',
+    tags: ['calls', 'insights', 'analytics'],
+    firstMessage:
+      'Hi, I’m the Call Insights bot. How can I assist with call analysis?',
+  },
+];
+
+//Selects a bot by its name and updates the UI with the bot's details.
 
 function selectBot(botName) {
   const selectedBot = bots.find((bot) => bot.name === botName);
@@ -65,7 +72,6 @@ function selectBot(botName) {
 
   // Highlight the active button in the sidebar
   document.querySelectorAll('.nav-item').forEach((button) => {
-    console.log('This works');
     button.classList.remove('active');
   });
 
@@ -74,6 +80,8 @@ function selectBot(botName) {
   );
   if (button) button.classList.add('active');
 }
+
+// this method is responsible for the user message and bot response
 
 querybutton.addEventListener('click', function () {
   const userInput = document.getElementById('user-input').value;
@@ -136,21 +144,21 @@ function onFetchAllEmails() {
 }
 
 function onApplyFilters() {
-  console.log('Apply Filters Selected');
-  emailFilterModal.style.display = 'flex'; // Show the modal
-
-  emailFilterForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const startDate = document.getElementById('start-date').value;
-    const endDate = document.getElementById('end-date').value;
-    const email = document.getElementById('sender-email').value;
-
-    console.log('Applied Filters' + startDate, endDate, email);
-
-    emailFilterModal.style.display = 'none';
-  });
+  emailFilterModal.style.display = 'flex';
 }
+
+emailFilterForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const startDate = document.getElementById('start-date').value;
+  const endDate = document.getElementById('end-date').value;
+  const email = document.getElementById('sender-email').value;
+
+  console.log('Applied Filters' + startDate, endDate, email);
+
+  emailFilterModal.style.display = 'none';
+  emailFilterForm.reset();
+});
 
 cancelEmailFilter.addEventListener('click', function () {
   emailFilterModal.style.display = 'none'; // Hide the modal
