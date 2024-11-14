@@ -15,31 +15,31 @@ const emailFilterForm = document.getElementById('email-filter-form');
 const bots = [
   {
     name: 'Pricing Assistant',
-    description: 'Get quick and accurate quotes.',
+    description: 'Generate pricing offers instantly',
     tags: ['Chatbot', 'Quick'],
     firstMessage:
-      'Hello, I’m the Pricing Assistant  specialist. How can I help you?',
+      'Hello, I’m your pricing assistant specialized in pricing recommendations. How can I help you today?',
   },
   {
     name: 'Instant Proposals',
-    description: 'Manage and access documents intelligently.',
+    description: 'Create proposals and quotes',
     tags: ['documents', 'management', 'access'],
     firstMessage:
-      'Hi, I’m here to assist you with your documents. How can I help?',
+      "Hello! I'm your AI Proposal Generator. I can help create professional proposals and quotes based on your templates. What would you like to draft today?",
   },
   {
     name: 'Email Insights',
-    description: 'Insights into your email interactions.',
+    description: 'Chat with customer email data',
     tags: ['email', 'insights', 'analytics'],
     firstMessage:
-      'Hello, I’m the Email Intel bot. How can I help you analyze emails?',
+      "Hi there! I'm your Email Insights Assistant. I can help you understand customer conversations and extract key insights. How can I assist you today?",
   },
   {
     name: 'Sales Call Analysis',
-    description: 'Analyze and gain insights from calls.',
+    description: 'Analyze sales calls to extract key insights',
     tags: ['calls', 'insights', 'analytics'],
     firstMessage:
-      'Hi, I’m the Call Insights bot. How can I assist with call analysis?',
+      "Welcome! I'm your Sales Call Analysis Assistant. I can help analyze sales call recordings and update your CRM with insights. Which call recording would you like to analyze?",
   },
 ];
 
