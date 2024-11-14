@@ -184,6 +184,7 @@ async function callBedrockAgent(message, sessionId) {
   }
 }
 
+
 // Function to create and append a message to the chat
 function appendMessage(content, isUser = false) {
   const chatBox = document.getElementById('chat-box');
