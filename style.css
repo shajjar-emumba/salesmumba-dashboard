@@ -978,3 +978,20 @@ body {
   cursor: pointer;
   font-size: 15px;
 }
+
+.action-items-list {
+  margin-left: 12px;
+}
+
+.customer-data-list {
+  margin-left: 10px;
+}
+.customer-data-list li {
+  list-style-type: none;
+}
+.customer-data-list span {
+  font-weight: 600;
+  width: 140px;
+  display: inline-block;
+  font-size: 15px;
+}
