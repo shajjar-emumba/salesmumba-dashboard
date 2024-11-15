@@ -1,1 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallBridge AI</title>
+    <!-- External CSS and Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Libre+Franklin:wght@400&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Libre Franklin', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh; /* Ensures the body fills the entire screen */
+            margin: 0;
+            padding: 145px;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
 
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 24px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow-y: auto; /* Allow vertical scrolling */
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            color: #2C3E50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-family: 'Libre Franklin', sans-serif;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-family: 'Oswald', sans-serif;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .popup-message {
+            display: none;
+            background-color: #FF9900;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-size: 1.2em;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .form-control-file {
+            display: none;
+        }
+
+        /* Custom upload button styling */
+        .custom-upload-btn {
+            display: inline-block;
+            background-color: #d3d3d3; /* AWS grey background */
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease; /* Smooth hover effect */
+        }
+
+        .custom-upload-btn img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .custom-upload-btn:hover {
+            background-color: #b0b0b0; /* Darker grey on hover */
+        }
+
+        .btn-primary {
+            background-color: #E67E22;
+            border-color: #E67E22;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #D35400;
+            border-color: #D35400;
+        }
+
+        #transcriptionResults {
+            display: none;
+            margin-top: 30px;
+            padding-bottom: 20px;
+            max-height: 60vh; /* Restrict the height */
+            overflow-y: auto; /* Allow vertical scrolling if content overflows */
+        }
+
+        .border {
+            border: 1px solid #e0e0e0;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .tagline {
+            font-family: 'Libre Franklin', sans-serif;
+            color: #95a5a6;
+            font-size: 1rem;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 767px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn-primary {
+                width: 100%;
+            }
+
+            .custom-upload-btn {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- App Header -->
+        <div class="logo-container">
+            <h1>CallBridge AI</h1>
+            <p class="tagline">Bridging voice data to actionable CRM insights</p>
+        </div>
+
+        <!-- Upload Form -->
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <!-- Hidden file input -->
+                <input type="file" name="file" class="form-control-file" id="fileInput" required>
+                
+                <!-- Custom upload button with the icon -->
+                <label for="fileInput" class="custom-upload-btn">
+                    <!-- Corrected the path to the icon -->
+                    <img src="{{ url_for('static', filename='images/music-upload-audio-up-file-arrow-512.webp') }}" alt="Upload Icon">
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Upload</button>
+        </form>
+
+        <!-- Popup Message for Audio Uploaded -->
+        <div id="popupMessage" class="popup-message" style="display:none;">Audio uploaded</div>
+
+        <!-- Popup Message for Transcription In Progress -->
+        <div id="transcriptionPopup" class="alert alert-info mt-4" style="display: none;">
+            <strong>Transcription in progress...</strong> Please wait until it's completed.
+        </div>
+
+        <!-- Transcription Results Section -->
+        <div id="transcriptionResults">
+            <div class="card">
+                <h3>Transcription Text</h3>
+                <pre id="transcriptionText" class="border p-3" style="background-color: #f7f7f7;"></pre>
+            </div>
+
+            <div class="card">
+                <h3>Summary</h3>
+                <p id="summary" class="border p-3" style="background-color: #f7f7f7;"></p>
+            </div>
+
+            <div class="card">
+                <h3>Action Items</h3>
+                <p id="actionItems" class="border p-3" style="background-color: #f7f7f7;"></p>
+            </div>
+
+            <div class="card">
+                <h3>Customer Data</h3>
+                <pre id="customerData" class="border p-3" style="background-color: #f7f7f7;"></pre>
+            </div>
+
+            <div class="card">
+                <h3>Zoho CRM Data</h3>
+                <pre id="zohoCRMData" class="border p-3" style="background-color: #f7f7f7;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").onsubmit = function() {
+            const popup = document.getElementById("popupMessage");
+            popup.style.display = "block";
+
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 3000);
+
+            document.getElementById('transcriptionPopup').style.display = 'block';
+        };
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'completed') {
+                    document.getElementById('transcriptionText').textContent = data.transcription_text;
+                    document.getElementById('summary').textContent = data.model_summary || 'No summary available.';
+                    document.getElementById('actionItems').textContent = data.action_items || 'No action items available.';
+                    document.getElementById('customerData').textContent = JSON.stringify(data.customer_data, null, 2);
+
+                    document.getElementById('transcriptionPopup').style.display = 'none';
+                    document.getElementById('transcriptionResults').style.display = 'block';
+                } else {
+                    document.getElementById('transcriptionPopup').style.display = 'none';
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                document.getElementById('transcriptionPopup').style.display = 'none';
+                alert('Error: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
