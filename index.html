@@ -236,7 +236,54 @@
             </div>
           </div>
 
-          <div class="sales-anaylis" id="analytics">Sales Call Analysis</div>
+          <div class="sales-anaylis" id="analytics">
+            <div class="card-header">
+              <h3>CallBridge AI</h3>
+              <p>Bridging voice data to actionable CRM insight</p>
+            </div>
+            <div class="card-content">
+              <div class="user-interaction" id="user-interaction">
+                <div class="upload-container">
+                  <label for="audio-upload" class="upload-circle">
+                    <i class="fas fa-file-audio"></i>
+                  </label>
+                  <input
+                    type="file"
+                    id="audio-upload"
+                    accept="audio/*"
+                    style="display: none"
+                  />
+                  <p class="file-name" id="file-name"></p>
+                </div>
+                <button
+                  class="extract-button"
+                  id="extract-button"
+                  style="display: none"
+                  type="submit"
+                  onclick="handleExtractButtonClick(event)"
+                >
+                  Extract Transcript
+                </button>
+              </div>
+              <div class="extracted-data" id="extracted-data">
+                <div class="upload-to-zoho">
+                  <button class="">Upload To Zoho</button>
+                </div>
+
+                <h3>Transcription Text</h3>
+                <p></p>
+
+                <h3>Summary</h3>
+                <p></p>
+
+                <h3>Action Items</h3>
+                <p></p>
+
+                <h3>Customer Data</h3>
+                <p></p>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 

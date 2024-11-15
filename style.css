@@ -847,3 +847,121 @@ body {
 .sales-anaylis {
   display: none;
 }
+
+.sales-anaylis {
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid var(--border-color);
+}
+
+.card-header {
+  background-color: var(--primary-bg);
+  padding: 10px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.card-header h3 {
+  color: #151d36;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.card-header p {
+  color: #1a274f;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.card-content {
+  max-height: 68vh;
+  overflow: scroll;
+  background-color: white;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.upload-container {
+  margin: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.upload-circle {
+  width: 70px;
+  height: 70px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.upload-circle:hover {
+  background-color: #005f85;
+}
+
+.file-name {
+  margin-top: 10px;
+  font-size: 0.85em;
+  color: #333;
+}
+
+.user-interaction {
+  padding: 20px;
+}
+
+.extract-button {
+  background-color: #0074a8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-top: 50px;
+  margin-left: auto;
+}
+
+.extract-button:hover {
+  background-color: #005f85;
+}
+
+.extracted-data {
+  padding: 10px;
+  display: none;
+}
+.extracted-data h3 {
+  margin: 10px 0;
+  color: var(--primary-color);
+}
+.extracted-data p {
+  padding: 5px 12px;
+  background-color: #f3f3f3;
+  border-radius: 5px;
+  font-size: 14px;
+}
+.upload-to-zoho {
+  display: flex;
+  justify-content: flex-end;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 10px;
+}
+
+.upload-to-zoho button {
+  background-color: #0074a8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
