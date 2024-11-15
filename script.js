@@ -717,6 +717,9 @@ document.getElementById('audio-upload').addEventListener('change', function () {
   }
 });
 
+const uniqueAppID = generateUUID();
+console.log('Unique App ID:', uniqueAppID);
+
 async function handleExtractButtonClick(event) {
   event.preventDefault();
   const fileInput = document.getElementById('audio-upload');
@@ -733,7 +736,7 @@ async function handleExtractButtonClick(event) {
     const requestData = {
       fileName: file.name,
       fileContent: base64Content,
-      unique_id: generateUUID(),
+      unique_id: uniqueAppID,
     };
 
     console.log('Request Body:', requestData);
@@ -760,38 +763,18 @@ async function handleExtractButtonClick(event) {
 }
 
 async function pollForData() {
-  const maxRetries = 1; // Number of retries before returning the fake data response
-  let attemptCount = 0; // Counter to track attempts
+  const getFileDataUrl = `https://5k4ktv6516.execute-api.us-east-1.amazonaws.com/prod/getfiledata?file_key=${uniqueAppID}`;
+  console.log('Polling GET API:', getFileDataUrl);
 
   pollingInterval = setInterval(async function () {
     try {
-      console.log('Polling for data...');
-
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
-
-      let getFileDataResult;
-
-      // For the first few attempts, simulate an error response
-      if (attemptCount < maxRetries) {
-        getFileDataResult = { error: 'Item not found' };
-        console.log('GET API Response:', getFileDataResult);
-      } else {
-        getFileDataResult = fakeResponse;
-        console.log('GET API Response:', getFileDataResult);
-
-        clearInterval(pollingInterval);
-      }
-
-      attemptCount++;
+      const getFileDataResponse = await fetch(getFileDataUrl);
+      const getFileDataResult = await getFileDataResponse.json();
+      console.log('GET API Response:', getFileDataResult);
 
       // Check if data is available and display it
       if (getFileDataResult && getFileDataResult.data) {
         const data = getFileDataResult.data;
-
-        // console.log(data.transcription_text.S);
-        // console.log(data.summary.S);
-        // console.log(data.action_items.S);
-        // console.log(data.customer_data.S);
 
         document.getElementById('user-interaction').style = 'display: none';
         document.getElementById('extracted-data').style = 'display: block';
@@ -813,11 +796,139 @@ async function pollForData() {
         // Update Customer Data
         extractedDataDiv.querySelector('p:nth-of-type(4)').textContent =
           data.customer_data.S;
+
+        clearInterval(pollingInterval);
       }
     } catch (error) {
       console.error('Error fetching GET API data:', error);
     }
   }, 5000); // Poll every 5 seconds
+}
+
+//This is method to fake the api response
+
+// async function pollForData() {
+//   const maxRetries = 1; // Number of retries before returning the fake data response
+//   let attemptCount = 0; // Counter to track attempts
+
+//   pollingInterval = setInterval(async function () {
+//     try {
+//       console.log('Polling for data...');
+
+//       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+
+//       let getFileDataResult;
+
+//       // For the first few attempts, simulate an error response
+//       if (attemptCount < maxRetries) {
+//         getFileDataResult = { error: 'Item not found' };
+//         console.log('GET API Response:', getFileDataResult);
+//       } else {
+//         getFileDataResult = fakeResponse;
+//         console.log('GET API Response:', getFileDataResult);
+
+//         clearInterval(pollingInterval);
+//       }
+
+//       attemptCount++;
+
+//       // Check if data is available and display it
+//       if (getFileDataResult && getFileDataResult.data) {
+//         const data = getFileDataResult.data;
+
+//         // console.log(data.transcription_text.S);
+//         // console.log(data.summary.S);
+//         // console.log(data.action_items.S);
+//         // console.log(data.customer_data.S);
+
+//         document.getElementById('user-interaction').style = 'display: none';
+//         document.getElementById('extracted-data').style = 'display: block';
+
+//         const extractedDataDiv = document.getElementById('extracted-data');
+
+//         // Update Transcription Text
+//         extractedDataDiv.querySelector('p:nth-of-type(1)').textContent =
+//           data.transcription_text.S;
+
+//         // Update Summary
+//         extractedDataDiv.querySelector('p:nth-of-type(2)').textContent =
+//           data.summary.S;
+
+//         // Update Action Items
+//         extractedDataDiv.querySelector('p:nth-of-type(3)').textContent =
+//           data.action_items.S;
+
+//         // Update Customer Data
+//         extractedDataDiv.querySelector('p:nth-of-type(4)').textContent =
+//           data.customer_data.S;
+//       }
+//     } catch (error) {
+//       console.error('Error fetching GET API data:', error);
+//     }
+//   }, 5000); // Poll every 5 seconds
+// }
+
+document
+  .getElementById('upload-to-zoho')
+  .addEventListener('click', async function () {
+    const zohoApiUrl = `https://q1byn9qsjb.execute-api.us-east-1.amazonaws.com/prod/create-lead?file_key=${uniqueAppID}`;
+    console.log('Calling Zoho API:', zohoApiUrl);
+
+    try {
+      const zohoResponse = await fetch(zohoApiUrl, {
+        method: 'GET',
+      });
+      const zohoResult = await zohoResponse.json();
+      console.log(zohoResult);
+
+      if (zohoResult.status === 'needs_auth') {
+        // Open the auth URL in a popup window
+        const popupWidth = 600;
+        const popupHeight = 700;
+        const left = window.screen.width / 2 - popupWidth / 2;
+        const top = window.screen.height / 2 - popupHeight / 2;
+
+        const popup = window.open(
+          zohoResult.auth_url,
+          'ZohoAuth',
+          `width=${popupWidth},height=${popupHeight},left=${left},top=${top},popup=yes`
+        );
+
+        // Add message listener for the popup callback
+        window.addEventListener('message', function (event) {
+          if (event.data === 'zoho_auth_success') {
+            popup.close();
+            // Retry creating the lead after successful authentication
+            createZohoLead();
+          }
+        });
+      } else if (zohoResponse.ok) {
+        alert('Data uploaded to Zoho successfully!');
+      } else {
+        alert(`Failed to upload data to Zoho: ${zohoResult.message}`);
+      }
+    } catch (error) {
+      console.error('Error uploading data to Zoho:', error);
+      alert(`Error uploading data to Zoho: ${error.message}`);
+    }
+  });
+
+// Add this helper function to handle lead creation
+async function createZohoLead() {
+  const zohoApiUrl = `https://q1byn9qsjb.execute-api.us-east-1.amazonaws.com/prod/create-lead?file_key=${uniqueAppID}`;
+  try {
+    const zohoResponse = await fetch(zohoApiUrl, { method: 'GET' });
+    const zohoResult = await zohoResponse.json();
+
+    if (zohoResponse.ok && !zohoResult.status) {
+      alert('Data uploaded to Zoho successfully!');
+    } else {
+      alert(`Failed to upload data to Zoho: ${zohoResult.message}`);
+    }
+  } catch (error) {
+    console.error('Error uploading data to Zoho:', error);
+    alert(`Error uploading data to Zoho: ${error.message}`);
+  }
 }
 
 // async function pollForData() {
@@ -865,25 +976,25 @@ function generateUUID() {
   });
 }
 
-const fakeResponse = {
-  data: {
-    summary: {
-      S: "Marcos Paul is a 21 year old interested in pursuing an associate's degree in electronics/computer science. He currently holds a GED and is not affiliated with the military. Marcos is undecided on the exact program he wants to study but is interested in computers. He is available to be contacted and lives in the Central time zone.",
-    },
-    customer_data: {
-      S: 'First Name: Marcos\nLast Name: Paul\nEmail: marco@yahoo.com  \nPhone: Unknown\nCity: Unknown\nState: Oklahoma\nZip Code: 74447\nCountry: USA  \nLead Source: Website Form\nCompany: Unknown',
-    },
-    zoho_crm_data: {
-      S: '{"data": [{"Last_Name": "Paul", "First_Name": "Marcos", "Company": "Unknown", "Email": "marco@yahoo.com", "Phone": "Unknown", "City": "Unknown", "Country": "USA", "Lead Source": "Website Form", "Zip_Code": "74447", "Summary": "Marcos Paul is a 21 year old interested in pursuing an associate\'s degree in electronics/computer science. He currently holds a GED and is not affiliated with the military. Marcos is undecided on the exact program he wants to study but is interested in computers. He is available to be contacted and lives in the Central time zone.", "Action_Items": " - Send information on associate\'s degree programs related to electronics/computer science - Have enrollment counselors contact Marcos to further discuss academic interests and program options - Provide details on financial aid opportunities - Follow up with Marcos on enrollment status"}]}',
-    },
-    transcription_text: {
-      S: "Name is James again and I'm calling on behalf of education experts from a quality monitored line. And well, I see that you recently filled a form on the internet expressing an interest in earning a degree, sir. Is this correct? Ok. All right. So that's great. I'll just need only a few moments of your time so I can match you with the most appropriate schools. Are you at least 18 years of age? Yes. Ok. Do you currently have a high school diploma or a gedaged? May I ask if we can find a school for you that meets your needs? Would you be interested in furthering your education in the next six? Ok. So that's great. Name is James again and I'm calling on behalf of education experts from a quality monitored line . And well , I see that you recently filled a form on the internet expressing an interest in earning a degree , sir . Is this correct ? Ok . All right . So that's great . I'll just need only a few moments of your time so I can match you with the most appropriate schools . Are you at least 18 years of age ? Yes . Ok . Do you currently have a high school diploma or a gedaged ? May I ask if we can find a school for you that meets your needs ? Would you be interested in furthering your education in the next six ? Ok . So that's great . So let me first verify the information I already got for you, Mr Pal. Uh I got your first name. Uh So Marcos last name is Paul. Alright. Now kindly verify for me your address, please. 1331 East Randolph. All right. Now this time, kindly verify for me your city state and your zip code, please. Ok. Oklahoma. Mhm. 74447. Thank you, sir. Lastly kindly verify for me your email address please. Marco at yahoo.com. Alright, thank you for that, sir. So let me first verify the information I already got for you , Mr Pal . Uh I got your first name . Uh So Marcos last name is Paul . Alright . Now kindly verify for me your address , please . 1331 East Randolph . All right . Now this time , kindly verify for me your city state and your zip code , please . Ok . Oklahoma . Mhm . 74447 . Thank you , sir . Lastly kindly verify for me your email address please . Marco at yahoo.com . Alright , thank you for that , sir . Now, may I ask what area of interest you're looking to further education career in or what course would you like to? Oh, ok. Uh what course would you like to take up in college, sir? Um Really right now I'm really unders shattered. Uh, if I had a few options I would wanna look into right now, kind of undecided on that. Ok. All right, no problem there. But so in the future, if there's any course that you would like to take up, would you like me to match it right now? So that you have information in your hand? Would that be fine? Now , may I ask what area of interest you're looking to further education career in or what course would you like to ? Oh , ok . Uh what course would you like to take up in college , sir ? Um Really right now I'm really unders shattered . Uh , if I had a few options I would wanna look into right now , kind of undecided on that . Ok . All right , no problem there . But so in the future , if there's any course that you would like to take up , would you like me to match it right now ? So that you have information in your hand ? Would that be fine ? Uh uh electronics, would that be computer on your computer? Ok. Alright. And what degree are looking to obtain? Would it be just simply an associate or a bachelor's degree, associate associate? All this won't take long and I'm just simply going to match it with schools here. Alright, sir. Now, may I ask, uh, how old are you please? Uh, 21. Ok. Uh ok. Alright. Just one second here. Uh Would you be interested in information system? Information system? Uh Can you tell me what does that vary on? Mm. Ok. Uh uh electronics , would that be computer on your computer ? Ok . Alright . And what degree are looking to obtain ? Would it be just simply an associate or a bachelor's degree , associate associate ? All this won't take long and I'm just simply going to match it with schools here . Alright , sir . Now , may I ask , uh , how old are you please ? Uh , 21 . Ok . Uh ok . Alright . Just one second here . Uh Would you be interested in information system ? Information system ? Uh Can you tell me what does that vary on ? Mm . Ok . I'm not sure I'm not, I don't have the full details here, but certainly it will be involved. It will certainly involve computers. I don't know. Excuse me, sir. Go ahead please. I think it is a 57 game. Ok. Well, I'm not, I don't have the details about information system, but definitely it will involve computers. But, uh, once I match with this school enrollment counselors will try to contact you and they can further explain what this is all about. Will that be fine with you? Ok. May I ask, are you associated with the United States military? No. Ok. I'm not sure I'm not , I don't have the full details here , but certainly it will be involved . It will certainly involve computers . I don't know . Excuse me , sir . Go ahead please . I think it is a 57 game . Ok . Well , I'm not , I don't have the details about information system , but definitely it will involve computers . But , uh , once I match with this school enrollment counselors will try to contact you and they can further explain what this is all about . Will that be fine with you ? Ok . May I ask , are you associated with the United States military ? No . Ok . All right. Ok. One second here. Excuse me? Ok. Uh, is your GED your highest level of education or are we able to take up some colleges? That's high? Ah. Ok. Ok. And what is your time zone there? What your time zone, what time zone are you in? What, what is it again, please? Central time. Is that right? Is it central time? Yes, sir. All right . Ok . One second here . Excuse me ? Ok . Uh , is your GED your highest level of education or are we able to take up some colleges ? That's high ? Ah . Ok . Ok . And what is your time zone there ? What your time zone , what time zone are you in ? What , what is it again , please ? Central time . Is that right ? Is it central time ? Yes , sir . Ok. That's good. So I was able to match with school already and it's all right. So I would like to thank you for your time and the school, the call. So we will contact you in the near future. Alright. Thank you, Mr Paul. You have a nice day, sir. I'm sorry, from education experts from a quality monitor line, but I'm trying to ask you. Ok . That's good . So I was able to match with school already and it's all right . So I would like to thank you for your time and the school , the call . So we will contact you in the near future . Alright . Thank you , Mr Paul . You have a nice day , sir . I'm sorry , from education experts from a quality monitor line , but I'm trying to ask you .",
-    },
-    action_items: {
-      S: "- Send information on associate's degree programs related to electronics/computer science\n- Have enrollment counselors contact Marcos to further discuss academic interests and program options\n- Provide details on financial aid opportunities \n- Follow up with Marcos on enrollment status",
-    },
-    file_key: {
-      S: 'd989d0ab-b701-4c7f-a13c-2fa5e2440937',
-    },
-  },
-};
+// const fakeResponse = {
+//   data: {
+//     summary: {
+//       S: "Marcos Paul is a 21 year old interested in pursuing an associate's degree in electronics/computer science. He currently holds a GED and is not affiliated with the military. Marcos is undecided on the exact program he wants to study but is interested in computers. He is available to be contacted and lives in the Central time zone.",
+//     },
+//     customer_data: {
+//       S: 'First Name: Marcos\nLast Name: Paul\nEmail: marco@yahoo.com  \nPhone: Unknown\nCity: Unknown\nState: Oklahoma\nZip Code: 74447\nCountry: USA  \nLead Source: Website Form\nCompany: Unknown',
+//     },
+//     zoho_crm_data: {
+//       S: '{"data": [{"Last_Name": "Paul", "First_Name": "Marcos", "Company": "Unknown", "Email": "marco@yahoo.com", "Phone": "Unknown", "City": "Unknown", "Country": "USA", "Lead Source": "Website Form", "Zip_Code": "74447", "Summary": "Marcos Paul is a 21 year old interested in pursuing an associate\'s degree in electronics/computer science. He currently holds a GED and is not affiliated with the military. Marcos is undecided on the exact program he wants to study but is interested in computers. He is available to be contacted and lives in the Central time zone.", "Action_Items": " - Send information on associate\'s degree programs related to electronics/computer science - Have enrollment counselors contact Marcos to further discuss academic interests and program options - Provide details on financial aid opportunities - Follow up with Marcos on enrollment status"}]}',
+//     },
+//     transcription_text: {
+//       S: "Name is James again and I'm calling on behalf of education experts from a quality monitored line. And well, I see that you recently filled a form on the internet expressing an interest in earning a degree, sir. Is this correct? Ok. All right. So that's great. I'll just need only a few moments of your time so I can match you with the most appropriate schools. Are you at least 18 years of age? Yes. Ok. Do you currently have a high school diploma or a gedaged? May I ask if we can find a school for you that meets your needs? Would you be interested in furthering your education in the next six? Ok. So that's great. Name is James again and I'm calling on behalf of education experts from a quality monitored line . And well , I see that you recently filled a form on the internet expressing an interest in earning a degree , sir . Is this correct ? Ok . All right . So that's great . I'll just need only a few moments of your time so I can match you with the most appropriate schools . Are you at least 18 years of age ? Yes . Ok . Do you currently have a high school diploma or a gedaged ? May I ask if we can find a school for you that meets your needs ? Would you be interested in furthering your education in the next six ? Ok . So that's great . So let me first verify the information I already got for you, Mr Pal. Uh I got your first name. Uh So Marcos last name is Paul. Alright. Now kindly verify for me your address, please. 1331 East Randolph. All right. Now this time, kindly verify for me your city state and your zip code, please. Ok. Oklahoma. Mhm. 74447. Thank you, sir. Lastly kindly verify for me your email address please. Marco at yahoo.com. Alright, thank you for that, sir. So let me first verify the information I already got for you , Mr Pal . Uh I got your first name . Uh So Marcos last name is Paul . Alright . Now kindly verify for me your address , please . 1331 East Randolph . All right . Now this time , kindly verify for me your city state and your zip code , please . Ok . Oklahoma . Mhm . 74447 . Thank you , sir . Lastly kindly verify for me your email address please . Marco at yahoo.com . Alright , thank you for that , sir . Now, may I ask what area of interest you're looking to further education career in or what course would you like to? Oh, ok. Uh what course would you like to take up in college, sir? Um Really right now I'm really unders shattered. Uh, if I had a few options I would wanna look into right now, kind of undecided on that. Ok. All right, no problem there. But so in the future, if there's any course that you would like to take up, would you like me to match it right now? So that you have information in your hand? Would that be fine? Now , may I ask what area of interest you're looking to further education career in or what course would you like to ? Oh , ok . Uh what course would you like to take up in college , sir ? Um Really right now I'm really unders shattered . Uh , if I had a few options I would wanna look into right now , kind of undecided on that . Ok . All right , no problem there . But so in the future , if there's any course that you would like to take up , would you like me to match it right now ? So that you have information in your hand ? Would that be fine ? Uh uh electronics, would that be computer on your computer? Ok. Alright. And what degree are looking to obtain? Would it be just simply an associate or a bachelor's degree, associate associate? All this won't take long and I'm just simply going to match it with schools here. Alright, sir. Now, may I ask, uh, how old are you please? Uh, 21. Ok. Uh ok. Alright. Just one second here. Uh Would you be interested in information system? Information system? Uh Can you tell me what does that vary on? Mm. Ok. Uh uh electronics , would that be computer on your computer ? Ok . Alright . And what degree are looking to obtain ? Would it be just simply an associate or a bachelor's degree , associate associate ? All this won't take long and I'm just simply going to match it with schools here . Alright , sir . Now , may I ask , uh , how old are you please ? Uh , 21 . Ok . Uh ok . Alright . Just one second here . Uh Would you be interested in information system ? Information system ? Uh Can you tell me what does that vary on ? Mm . Ok . I'm not sure I'm not, I don't have the full details here, but certainly it will be involved. It will certainly involve computers. I don't know. Excuse me, sir. Go ahead please. I think it is a 57 game. Ok. Well, I'm not, I don't have the details about information system, but definitely it will involve computers. But, uh, once I match with this school enrollment counselors will try to contact you and they can further explain what this is all about. Will that be fine with you? Ok. May I ask, are you associated with the United States military? No. Ok. I'm not sure I'm not , I don't have the full details here , but certainly it will be involved . It will certainly involve computers . I don't know . Excuse me , sir . Go ahead please . I think it is a 57 game . Ok . Well , I'm not , I don't have the details about information system , but definitely it will involve computers . But , uh , once I match with this school enrollment counselors will try to contact you and they can further explain what this is all about . Will that be fine with you ? Ok . May I ask , are you associated with the United States military ? No . Ok . All right. Ok. One second here. Excuse me? Ok. Uh, is your GED your highest level of education or are we able to take up some colleges? That's high? Ah. Ok. Ok. And what is your time zone there? What your time zone, what time zone are you in? What, what is it again, please? Central time. Is that right? Is it central time? Yes, sir. All right . Ok . One second here . Excuse me ? Ok . Uh , is your GED your highest level of education or are we able to take up some colleges ? That's high ? Ah . Ok . Ok . And what is your time zone there ? What your time zone , what time zone are you in ? What , what is it again , please ? Central time . Is that right ? Is it central time ? Yes , sir . Ok. That's good. So I was able to match with school already and it's all right. So I would like to thank you for your time and the school, the call. So we will contact you in the near future. Alright. Thank you, Mr Paul. You have a nice day, sir. I'm sorry, from education experts from a quality monitor line, but I'm trying to ask you. Ok . That's good . So I was able to match with school already and it's all right . So I would like to thank you for your time and the school , the call . So we will contact you in the near future . Alright . Thank you , Mr Paul . You have a nice day , sir . I'm sorry , from education experts from a quality monitor line , but I'm trying to ask you .",
+//     },
+//     action_items: {
+//       S: "- Send information on associate's degree programs related to electronics/computer science\n- Have enrollment counselors contact Marcos to further discuss academic interests and program options\n- Provide details on financial aid opportunities \n- Follow up with Marcos on enrollment status",
+//     },
+//     file_key: {
+//       S: 'd989d0ab-b701-4c7f-a13c-2fa5e2440937',
+//     },
+//   },
+// };
