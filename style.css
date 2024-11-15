@@ -851,7 +851,7 @@ body {
 .sales-anaylis {
   border-radius: 8px;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 40px auto 0 auto;
   border: 1px solid var(--border-color);
 }
 
