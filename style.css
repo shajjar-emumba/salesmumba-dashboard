@@ -881,6 +881,19 @@ body {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
+.card-content {
+  max-height: 68vh;
+  overflow: scroll;
+  background-color: white;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.card-content::-webkit-scrollbar {
+  display: none;
+}
 
 .upload-container {
   margin: 50px;

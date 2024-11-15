@@ -806,7 +806,6 @@ async function pollForData() {
 }
 
 //This is method to fake the api response
-
 // async function pollForData() {
 //   const maxRetries = 1; // Number of retries before returning the fake data response
 //   let attemptCount = 0; // Counter to track attempts
@@ -891,8 +890,12 @@ document
         const popup = window.open(
           zohoResult.auth_url,
           'ZohoAuth',
-          `width=${popupWidth},height=${popupHeight},left=${left},top=${top},popup=yes`
+          `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable,scrollbars`
         );
+
+        if (!popup) {
+          alert('Popup blocked! Please allow popups for this site.');
+        }
 
         // Add message listener for the popup callback
         window.addEventListener('message', function (event) {
@@ -930,43 +933,6 @@ async function createZohoLead() {
     alert(`Error uploading data to Zoho: ${error.message}`);
   }
 }
-
-// async function pollForData() {
-//   // const getFileDataUrl = `https://5k4ktv6516.execute-api.us-east-1.amazonaws.com/prod/getfiledata?file_key=${uniqueAppID}`;
-//   // console.log('Polling GET API:', getFileDataUrl);
-
-//   const fakeResponse = {
-//     data: {
-//       transcription_text: { S: 'This is a simulated transcription text.' },
-//       summary: { S: 'This is a simulated summary of the transcription.' },
-//       action_items: { S: 'These are simulated action items.' },
-//       customer_data: { S: 'Simulated customer data.' },
-//     },
-//   };
-
-//   pollingInterval = setInterval(async function () {
-//     try {
-//       // const getFileDataResponse = await fetch(getFileDataUrl);
-//       // const getFileDataResult = await getFileDataResponse.json();
-
-//       console.log('Getting');
-//       await new Promise((resolve) => setTimeout(resolve, 2000));
-//       const getFileDataResult = fakeResponse;
-//       console.log('GET API Response:', getFileDataResult);
-
-//       if (getFileDataResult) {
-//         console.log('here');
-
-//         //I Will show the data to the UI in future
-//         clearInterval(pollingInterval);
-//       }
-
-//       // }
-//     } catch (error) {
-//       console.error('Error fetching GET API data:', error);
-//     }
-//   }, 5000); // Poll every 5 seconds
-// }
 
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
