@@ -316,7 +316,6 @@ body {
   padding: 10px;
 }
 
-
 .input-container {
   display: flex;
   align-items: center;
@@ -324,10 +323,9 @@ body {
 }
 
 .input-container:focus-within {
-  border-color: #FF8C00;
+  border-color: #ff8c00;
   box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.1);
 }
-
 
 .last-row {
   display: flex;
@@ -346,7 +344,6 @@ body {
   border: 1px solid #ccc;
   margin-right: 10px;
 }
-
 
 /* Button */
 .query-button {
@@ -685,7 +682,6 @@ body {
   padding-left: 25px;
 }
 
-
 .pdf-status {
   position: absolute;
   left: 10px;
@@ -703,7 +699,7 @@ body {
 }
 
 .attachment-icon.has-pdf {
-  color: #FF8C00;
+  color: #ff8c00;
 }
 
 #pdf-input {
@@ -730,7 +726,7 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color:#e6f6ff;
+  background-color: #e6f6ff;
   color: black;
   padding: 12px 24px;
   border-radius: 8px;
@@ -761,21 +757,21 @@ body {
 
 @keyframes slideIn {
   from {
-      transform: translateX(100%);
-      opacity: 0;
+    transform: translateX(100%);
+    opacity: 0;
   }
   to {
-      transform: translateX(0);
-      opacity: 1;
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
 @keyframes fadeOut {
   from {
-      opacity: 1;
+    opacity: 1;
   }
   to {
-      opacity: 0;
+    opacity: 0;
   }
 }
 
@@ -794,7 +790,6 @@ body {
   height: 16px;
 }
 
-
 /* PDF Preview (if needed) */
 .pdf-preview {
   margin-top: 8px;
@@ -808,14 +803,13 @@ body {
 }
 
 .pdf-preview .pdf-icon {
-  color: #FF8C00;
+  color: #ff8c00;
 }
-
 
 /* Message styles for upload notifications in chat */
 .message.system-message.upload-message {
   background-color: #f3f4f6;
-  border-left: 4px solid #FF8C00;
+  border-left: 4px solid #ff8c00;
 }
 
 /* Loading indicator for upload */
@@ -825,26 +819,31 @@ body {
   height: 16px;
   border: 2px solid #f3f4f6;
   border-radius: 50%;
-  border-top-color: #FF8C00;
+  border-top-color: #ff8c00;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
   to {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .upload-notification {
-      bottom: 10px;
-      right: 10px;
-      left: 10px;
-      max-width: none;
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
   }
-  
+
   .input-container {
-      margin: 8px;
+    margin: 8px;
   }
+}
+
+/* Sales Call Analysis */
+.sales-anaylis {
+  display: none;
 }
